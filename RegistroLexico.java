@@ -12,6 +12,8 @@ class RegistroLexico{
   private int linha;
   private String tipo;
   private String classe;
+  private String posicaoMemoria;
+  private int tamanho;
   
     //No AnalisadorSemantico
   public RegistroLexico(String lexema, NumToken token, String classe, String tipo) {
@@ -63,4 +65,20 @@ class RegistroLexico{
   public void setTipo(String tipo){
       this.tipo = tipo;
   }
+  
+public String getPosicaoMemoria() {
+    return posicaoMemoria;
+}
+
+public void setPosicaoMemoria(String posicaoMemoria) {
+    this.posicaoMemoria = posicaoMemoria;
+}
+
+public int getTamanho() {
+    return tamanho;
+}
+
+public void setTamanho(int tamanho) {
+    this.tamanho = tamanho;
+}
 }

@@ -1097,6 +1097,13 @@ public class AnalisadorSintatico{
          //Acao 2
          if(al.registroLexico.getTipo().equals("T_LOGICO")){
                fator_tipo = fator();
+
+               fator_end = novoTemporario(fator_tipo);
+               codigo.append("mov AX, "+fator_end);
+               codigo.append("neg AX");
+               codigo.append("add AX, 1");
+               codigo.append("mov " + fator_end+", AX");
+
          }else{
             System.out.println(al.registroLexico.get(contRegLex-1).getLinha() + ":Tipos incompativeis [" +  al.registroLexico.get(contRegLex-1).getToken() + "]");
             System.exit(0);

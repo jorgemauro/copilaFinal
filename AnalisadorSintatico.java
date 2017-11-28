@@ -346,7 +346,7 @@ public class AnalisadorSintatico{
             token_atual = al.registroLexico.get(contRegLex).getToken();
             
             //Acao 43
-            String tipo_valor = valor();
+            String tipo_valor = valor().getTipo();
             if(!rl.getTipo().equals(tipo_valor)){
                System.out.println(al.registroLexico.get(contRegLex-1).getLinha() + ":tipos incompativeis [" +  al.registroLexico.get(contRegLex-1).getLexema() + "]");
                System.exit(0);
@@ -413,7 +413,7 @@ public class AnalisadorSintatico{
          System.out.println(al.registroLexico.get(contRegLex).getLinha() + ":token nao esperado [" +  al.registroLexico.get(contRegLex).getToken() + "]");
          System.exit(0);
       }
-      String valor_tipo = valor();
+      String valor_tipo = valor().getTipo();
 
       rl.setTipo(valor_tipo);
       cmdNulo();
@@ -465,7 +465,7 @@ public class AnalisadorSintatico{
             System.exit(0);
       }
    
-      String exp_tipo = exp();
+      String exp_tipo = exp().getTipo();
 
       if(!rl.getTipo().equals(exp_tipo)){
          System.out.println(al.registroLexico.get(contRegLex-1).getLinha() + ":tipo incompativel [" +  al.registroLexico.get(contRegLex-1).getLexema() + "]");
@@ -510,7 +510,7 @@ public class AnalisadorSintatico{
          System.exit(0);
       }
    
-      cmdRepet_tipo = exp();
+      cmdRepet_tipo = exp().getTipo();
 
       //Acao 30
       if(!cmdRepet_tipo.equals("T_INTEIRO")){
@@ -529,7 +529,7 @@ public class AnalisadorSintatico{
          System.exit(0);
       }
    
-      String cmdRepet1_tipo = exp();
+      String cmdRepet1_tipo = exp().getTipo();
 
       //Acao 31
       if(!cmdRepet1_tipo.equals("T_INTEIRO")){
@@ -615,7 +615,7 @@ public class AnalisadorSintatico{
       }
 
       //Acao 29
-      String exp_tipo = exp();
+      String exp_tipo = exp().getTipo();
       if(!exp_tipo.equals("T_LOGICO")){
          System.out.println(al.registroLexico.get(contRegLex-1).getLinha() + ":tipo de identificador incompativel [" +  al.registroLexico.get(contRegLex-1).getToken() + "]");
          System.exit(0);
@@ -818,9 +818,11 @@ public class AnalisadorSintatico{
    }
 
    //EXP: EXPS [(=|<>|<|>|<=|>=) EXPS]
-   public static String exp(){
+   public static Retorno exp(){
+      Retorno exp_retorno = new Retorno();
       //Acao 20
       String exp_tipo = exps();
+      exp_retorno.setTipo(exps());
       int flag_exp = -1;
 
       if(token_atual == NumToken.T_IGUAL || token_atual == NumToken.T_DIFERENTE || token_atual == NumToken.T_MENOR ||
@@ -878,12 +880,12 @@ public class AnalisadorSintatico{
          //Acao 27
          String exps_tipo = exps();
 
-         if(exp_tipo.equals(exps_tipo)){
+         if(exp_retorno.getTipo().equals(exps_tipo)){
             if(exps_tipo.equals("T_CARACTERE") && (flag_exp == 0 || flag_exp == 1)){
-               exp_tipo = "T_LOGICO";
+                  exp_retorno.setTipo("T_LOGICO");
             }
             else if(exps_tipo == "T_INTEIRO"){
-               exp_tipo = "T_LOGICO";
+                  exp_retorno.setTipo("T_LOGICO");
             }
             else{
                System.out.println(al.registroLexico.get(contRegLex-1).getLinha() + ":Tipos incompativeis [" +  al.registroLexico.get(contRegLex-1).getToken() + "]");
@@ -895,7 +897,7 @@ public class AnalisadorSintatico{
             System.exit(0);
          }
       }   
-      return exp_tipo;
+      return exp_retorno;
    }
 
    //EXPS: [+|-] TERMO {(+|-|or) TERMO}*
@@ -918,7 +920,7 @@ public class AnalisadorSintatico{
          }
       }
       //Acao 15
-      exps_tipo = termo();
+      exps_tipo = termo().getTipo();
    
       while(token_atual == NumToken.T_MAIS || token_atual == NumToken.T_MENOS || token_atual == NumToken.T_OR){
          if(token_atual == NumToken.T_MENOS){
@@ -947,7 +949,7 @@ public class AnalisadorSintatico{
          }
 
          //Acao 19
-         String termo1_tipo = termo();
+         String termo1_tipo = termo().getTipo();
 
          if(termo1_tipo.equals(exps_tipo)){
             if((flag_exps == 0 || flag_exps == 1) && exps_tipo.equals("T_INTEIRO")){
@@ -974,9 +976,10 @@ public class AnalisadorSintatico{
    }
 
    //TERMO: FATOR {(*|/|and|%) FATOR}*
-   public static String termo(){
+   public static Retorno termo(){
       //Acao 9
-      String termo_tipo = fator();
+      Retorno termo_retorno = fator();
+
       int flag_termo = -1;
 
       while(token_atual == NumToken.T_ASTERISCO || token_atual == NumToken.T_BARRA || token_atual == NumToken.T_AND || token_atual == NumToken.T_PORCENTO){
@@ -1013,14 +1016,14 @@ public class AnalisadorSintatico{
             flag_termo = 3;
          }
          //Acao 14
-         String fator1_tipo = fator();
+         Retorno fator1_retorno = fator();
 
-         if(fator1_tipo.equals(termo_tipo)){
-            if(flag_termo == 0 || flag_termo == 1 || flag_termo == 3 && termo_tipo.equals("T_INTEIRO")){
-               termo_tipo = "T_INTEIRO";
+         if(fator1_retorno.getTipo().equals(termo_retorno.getTipo())){
+            if(flag_termo == 0 || flag_termo == 1 || flag_termo == 3 && termo_retorno.getTipo().equals("T_INTEIRO")){
+               termo_retorno.setTipo("T_INTEIRO");
             }
-            else if (flag_termo == 2 && termo_tipo.equals("T_LOGICO")){
-               termo_tipo = "T_LOGICO";
+            else if (flag_termo == 2 && termo_retorno.getTipo().equals("T_LOGICO")){
+               termo_retorno.setTipo("T_LOGICO");
             }
             else{
                System.out.println(al.registroLexico.get(contRegLex-1).getLinha() + ":Tipos incompativeis [" +  al.registroLexico.get(contRegLex-1).getToken() + "]");
@@ -1033,12 +1036,11 @@ public class AnalisadorSintatico{
          }
 
       }
-      return termo_tipo;
+      return termo_retorno;
    }
 
    //FATOR: id['[' EXP ']'] | VALOR | !FATOR | '('EXP')'
-   public static String fator(){
-      String fator_tipo = ""; 
+   public static Retorno fator(){ 
       Retorno fator_retorno = new Retorno();
       if(token_atual == NumToken.T_ID){
          token_esperado = NumToken.T_ID;
@@ -1053,7 +1055,7 @@ public class AnalisadorSintatico{
             System.exit(0);
          }
          else{
-            fator_tipo = rl.getTipo();
+            fator_retorno.setTipo(rl.getTipo());
          }
 
          if(token_atual == NumToken.T_ABRECOLCHETE){
@@ -1063,8 +1065,9 @@ public class AnalisadorSintatico{
             token_atual = al.registroLexico.get(contRegLex).getToken();
             
             //Acao 4
-            fator_tipo = exp();
-            if(!fator_tipo.equals("T_INTEIRO")){
+            Retorno exp_retorno = exp();
+            fator_retorno.setTipo(exp_retorno.getTipo());
+            if(!fator_retorno.getTipo().equals("T_INTEIRO")){
                System.out.println(al.registroLexico.get(contRegLex-1).getLinha() + ":Tipos incompativeis [" +  al.registroLexico.get(contRegLex-1).getToken() + "]");
                System.exit(0);
             }
@@ -1082,10 +1085,11 @@ public class AnalisadorSintatico{
          }
       }
       else if(token_atual == NumToken.T_CONSTANTE || token_atual == NumToken.T_HEXA || token_atual == NumToken.T_STRING){
-         fator_tipo = valor();
-         codigo.append("dseg SEGMENT PUBLIC");
-         codigo.append("byte "+al.registroLexico.get(contRegLex).getLexema()+"$");
-         codigo.append("dseg ENDS");
+            Retorno valor_retorno = valor();
+         fator_retorno.setTipo(valor_retorno.getTipo());
+         codigo.append("dseg SEGMENT PUBLIC \n");
+         codigo.append("byte "+al.registroLexico.get(contRegLex).getLexema()+"$ \n");
+         codigo.append("dseg ENDS \n");
          fator_retorno.setEnd(proximaPosicaoMemoria("T_CARACTERE", 0));
       }
       
@@ -1095,14 +1099,15 @@ public class AnalisadorSintatico{
          contRegLex++;
          token_atual = al.registroLexico.get(contRegLex).getToken();
          //Acao 2
-         if(al.registroLexico.equals("T_LOGICO")){
-               fator_tipo = fator();
+         if(al.registroLexico.get(contRegLex).getTipo().equals("T_LOGICO")){
+            Retorno fator1_retorno = fator();
+               fator_retorno.setTipo(fator1_retorno.getTipo());
 
-               fator_end = novoTemporario(fator_tipo);
-               codigo.append("mov AX, "+fator_end);
-               codigo.append("neg AX");
-               codigo.append("add AX, 1");
-               codigo.append("mov " + fator_end+", AX");
+               fator_retorno.setEnd(novoTemporario(fator_retorno.getTipo()));
+               codigo.append("mov AX, "+fator_retorno.getEnd() + "\n");
+               codigo.append("neg AX \n");
+               codigo.append("add AX, 1 \n");
+               codigo.append("mov " + fator_retorno.getEnd() +", AX \n");
 
          }else{
             System.out.println(al.registroLexico.get(contRegLex-1).getLinha() + ":Tipos incompativeis [" +  al.registroLexico.get(contRegLex-1).getToken() + "]");
@@ -1116,7 +1121,9 @@ public class AnalisadorSintatico{
          contRegLex++;
          token_atual = al.registroLexico.get(contRegLex).getToken();
          //Acao 1
-         fator_tipo = exp();
+         Retorno exp_retorno = exp();
+         fator_retorno.setTipo(exp_retorno.getTipo());
+         fator_retorno.setEnd(exp_retorno.getEnd());
          if(token_atual == NumToken.T_FECHAPAR){
             token_esperado = NumToken.T_FECHAPAR;
             casaToken(token_esperado);
@@ -1134,12 +1141,12 @@ public class AnalisadorSintatico{
          System.out.println(al.registroLexico.get(contRegLex).getLinha() + ":token nao esperado [" +  al.registroLexico.get(contRegLex).getToken() + "]");
          System.exit(0);
       }
-      return fator_tipo;
+      return fator_retorno;
    }
 
    //VALOR: [+|-]constante | hexa | string | caractere
-   public static String valor(){
-      String valor_tipo = "";
+   public static Retorno valor(){
+      Retorno valor_retorno = new Retorno();
       if(token_atual == NumToken.T_MAIS || token_atual == NumToken.T_MENOS || token_atual == NumToken.T_CONSTANTE){
          if(token_atual == NumToken.T_MAIS){
             token_esperado = NumToken.T_MAIS;
@@ -1152,7 +1159,7 @@ public class AnalisadorSintatico{
                contRegLex++;
                token_atual = al.registroLexico.get(contRegLex).getToken();
                //Acao 5
-               valor_tipo = al.registroLexico.get(contRegLex-1).getTipo();
+               valor_retorno.setTipo(al.registroLexico.get(contRegLex-1).getTipo());
             }
          }
          else if(token_atual == NumToken.T_MENOS){
@@ -1166,7 +1173,7 @@ public class AnalisadorSintatico{
                contRegLex++;
                token_atual = al.registroLexico.get(contRegLex).getToken();
                //Acao 5
-               valor_tipo = al.registroLexico.get(contRegLex-1).getTipo();
+               valor_retorno.setTipo(al.registroLexico.get(contRegLex-1).getTipo());
             }
          }
          else{
@@ -1175,7 +1182,7 @@ public class AnalisadorSintatico{
             contRegLex++;
             token_atual = al.registroLexico.get(contRegLex).getToken();
             //Acao 5
-            valor_tipo = al.registroLexico.get(contRegLex-1).getTipo();
+            valor_retorno.setTipo(al.registroLexico.get(contRegLex-1).getTipo());
          }
       }
       else if(token_atual == NumToken.T_HEXA){
@@ -1184,7 +1191,7 @@ public class AnalisadorSintatico{
          contRegLex++;
          token_atual = al.registroLexico.get(contRegLex).getToken();
          //Acao 6
-         valor_tipo = al.registroLexico.get(contRegLex-1).getTipo();
+         valor_retorno.setTipo(al.registroLexico.get(contRegLex-1).getTipo());
       }
       else if(token_atual == NumToken.T_STRING){
          token_esperado = NumToken.T_STRING;
@@ -1192,7 +1199,7 @@ public class AnalisadorSintatico{
          contRegLex++;
          token_atual = al.registroLexico.get(contRegLex).getToken();
          //Acao 7
-         valor_tipo = al.registroLexico.get(contRegLex-1).getTipo();
+         valor_retorno.setTipo(al.registroLexico.get(contRegLex-1).getTipo());
       }
       else if(token_atual == NumToken.T_CARACTERE){
          token_esperado = NumToken.T_CARACTERE;
@@ -1200,14 +1207,14 @@ public class AnalisadorSintatico{
          contRegLex++;
          token_atual = al.registroLexico.get(contRegLex).getToken();
          //Acao 8
-         valor_tipo = al.registroLexico.get(contRegLex-1).getTipo();
+         valor_retorno.setTipo(al.registroLexico.get(contRegLex-1).getTipo());
       }
       else{
          System.out.println(al.registroLexico.get(contRegLex).getLinha() + ":token nao esperado [" +  al.registroLexico.get(contRegLex).getToken() + "]");
             System.exit(0);
       }
 
-      return valor_tipo;
+      return valor_retorno;
    }
    
    public static String proximaPosicaoMemoria( String tipo, int tamanho ){

@@ -16,6 +16,15 @@ cseg SEGMENT PUBLIC              ;inicio seg. codigo
 _strt:               ;inicio do programa
 		mov ax, dseg
 		mov ds, ax
+dseg SEGMENT PUBLIC 
+byte )$ 
+dseg ENDS 
+dseg SEGMENT PUBLIC 
+byte to$ 
+dseg ENDS 
+dseg SEGMENT PUBLIC 
+byte ,$ 
+dseg ENDS 
 		mov ah, 4Ch
 		int 21h
 cseg ENDS

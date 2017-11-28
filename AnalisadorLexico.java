@@ -69,7 +69,7 @@ class AnalisadorLexico{
 
             if(eFimArquivo(c) && estado == 0){
                 ts.insere("", NumToken.T_EOF);
-                regLexAtual = new RegistroLexico("", NumToken.T_EOF);
+                regLexAtual = new RegistroLexico("", NumToken.T_EOF, "C_RESERVADA", "T_RESERVADO");
                 regLexAtual.setLinha(linha);
                 registroLexico.add(regLexAtual);
                 break;
@@ -295,7 +295,7 @@ class AnalisadorLexico{
                                 if(ts.pesquisa(lex) == null){
                                     ts.insere(lex, NumToken.T_ID);
                                 }
-                                regLexAtual = new RegistroLexico(lex,ts.pesquisa(lex).getToken());
+                                regLexAtual = new RegistroLexico(lex,ts.pesquisa(lex).getToken(), "C_RESERVADA", "T_RESERVADO");
                             }
                             regLexAtual.setLinha(linha);
                             registroLexico.add(regLexAtual);
@@ -341,7 +341,7 @@ class AnalisadorLexico{
                                 c == '8' ||c == '9' ||c == 'A' ||c == 'B' ||c == 'C' ||c == 'D' ||c == 'E' ||c == 'F' ||
                                 c == 'a' ||c == 'b' ||c == 'c' ||c == 'd' ||c == 'e' ||c == 'f'){
                             lex += (char)c;
-                            regLexAtual = new RegistroLexico(lex,NumToken.T_HEXA, "C_CONSTANTE", "T_INTEIRO");
+                            regLexAtual = new RegistroLexico(lex,NumToken.T_HEXA, "C_CONSTANTE", "T_CARACTERE");
                             regLexAtual.setLinha(linha);
                             registroLexico.add(regLexAtual);
                             estado = 15;
@@ -372,7 +372,7 @@ class AnalisadorLexico{
                         if(c == '\''){
                             lex += (char)c;
                             estado = 15;
-                            regLexAtual = new RegistroLexico(lex, NumToken.T_CARACTERE);
+                            regLexAtual = new RegistroLexico(lex, NumToken.T_CARACTERE, "C_CONSTANTE", "T_CARACTERE");
                             regLexAtual.setLinha(linha);
                             ts.insere(lex, NumToken.T_CARACTERE);
                             registroLexico.add(regLexAtual);
@@ -410,7 +410,7 @@ class AnalisadorLexico{
                         }
                         else{
                             estado = 15;
-                            regLexAtual = new RegistroLexico(lex, NumToken.T_STRING, "C_CONSTANTE");
+                            regLexAtual = new RegistroLexico(lex, NumToken.T_STRING, "C_CONSTANTE", "T_STRING");
                             regLexAtual.setLinha(linha);
                             ts.insere(lex, NumToken.T_STRING);
                             registroLexico.add(regLexAtual);

@@ -1095,7 +1095,7 @@ public class AnalisadorSintatico{
          contRegLex++;
          token_atual = al.registroLexico.get(contRegLex).getToken();
          //Acao 2
-         if(al.registroLexico.getTipo().equals("T_LOGICO")){
+         if(al.registroLexico.equals("T_LOGICO")){
                fator_tipo = fator();
 
                fator_end = novoTemporario(fator_tipo);

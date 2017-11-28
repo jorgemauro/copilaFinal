@@ -1,0 +1,20 @@
+sseg SEGMENT STACK		      ;inicio seg. pilha
+		byte 4000h DUP(?)		;inicio seg. pilha
+sseg ENDS				;fim seg. pilha
+
+dseg SEGMENT PUBLIC		      ;inicio seg. dados
+		byte 4000h DUP(?)		;temporarios
+						;definicioes de variaveis e constantes
+sword ?				; var inteira em 4000hbyte ?				; var carac em 4002hdseg ENDS				;fim seg.dados
+
+cseg SEGMENT PUBLIC		      ;inicio seg. codigo
+		ASSUME CS:cseg, DS:dseg
+
+_strt:					;inicio do programa
+		mov ax, dseg
+		mov ds, ax
+		mov ah, 4Ch
+		int 21h
+cseg ENDS
+END _strt
+

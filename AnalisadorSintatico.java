@@ -67,13 +67,13 @@ public class AnalisadorSintatico{
    }
    //S: {DEC}+ {COMANDOS}+
    public static void S(){
-      codigo.append("sseg SEGMENT STACK		      ;inicio seg. pilha\n");
-      codigo.append("\t\tbyte 4000h DUP(?)		;inicio seg. pilha\n");
-      codigo.append("sseg ENDS				;fim seg. pilha\n\n");
+      codigo.append("sseg SEGMENT STACK               ;inicio seg. pilha\n");
+      codigo.append("\t\tbyte 4000h DUP(?)                  ;inicio seg. pilha\n");
+      codigo.append("sseg ENDS                  ;fim seg. pilha\n\n");
 
-      codigo.append("dseg SEGMENT PUBLIC		      ;inicio seg. dados\n");
-      codigo.append("\t\tbyte 4000h DUP(?)		;temporarios\n");
-      codigo.append("						;definicioes de variaveis e constantes\n");
+      codigo.append("dseg SEGMENT PUBLIC              ;inicio seg. dados\n");
+      codigo.append("\t\tbyte 4000h DUP(?)                  ;temporarios\n");
+      codigo.append("               ;definicioes de variaveis e constantes\n");
 
       token_atual = al.registroLexico.get(contRegLex).getToken();
       do{
@@ -86,12 +86,12 @@ public class AnalisadorSintatico{
          }
       }while(token_atual == NumToken.T_VAR || token_atual == NumToken.T_CONST);
           
-      codigo.append("dseg ENDS				;fim seg.dados\n\n");
+      codigo.append("dseg ENDS                  ;fim seg.dados\n\n");
       
-      codigo.append("cseg SEGMENT PUBLIC		      ;inicio seg. codigo\n");
+      codigo.append("cseg SEGMENT PUBLIC              ;inicio seg. codigo\n");
       codigo.append("\t\tASSUME CS:cseg, DS:dseg\n\n");
       
-      codigo.append("_strt:					;inicio do programa\n");
+      codigo.append("_strt:               ;inicio do programa\n");
       codigo.append("\t\tmov ax, dseg\n");
       codigo.append("\t\tmov ds, ax\n");
 
@@ -181,14 +181,14 @@ public class AnalisadorSintatico{
                   rl.setTipo("T_INTEIRO");
 
                   String mem = proximaPosicaoMemoria("T_INTEIRO", 0);
-                  codigo.append("sword ?				; var inteira em "+mem);
+                  codigo.append("sword ?              ; var inteira em "+mem+ "\n");
                   rl.setPosicaoMemoria(mem);
                }
                else{
                   rl.setTipo("T_CARACTERE");
 
                   String mem = proximaPosicaoMemoria("T_CARACTERE", 0);
-                  codigo.append("byte ?				; var carac em "+mem);
+                  codigo.append("byte ?               ; var carac em "+mem+ "\n");
                   rl.setPosicaoMemoria(mem);
                } 
             }
@@ -226,14 +226,14 @@ public class AnalisadorSintatico{
                   rl.setTipo("T_INTEIRO");
 
                   String mem = proximaPosicaoMemoria("T_INTEIRO", 0);
-                  codigo.append("sword "+ tamanhoVetor + " DUP(?)				; var inteira em "+mem);
+                  codigo.append("sword "+ tamanhoVetor + " DUP(?)				; var inteira em "+mem + "\n");
                   rl.setPosicaoMemoria(mem);
                }
                else{
                   rl.setTipo("T_CARACTERE");
 
                   String mem = proximaPosicaoMemoria("T_CARACTERE", 0);
-                  codigo.append("byte "+ tamanhoVetor + " DUP(?)			; var carac em "+mem);
+                  codigo.append("byte "+ tamanhoVetor + " DUP(?)			; var carac em "+mem+ "\n");
                   rl.setPosicaoMemoria(mem);
                } 
 
@@ -1039,6 +1039,7 @@ public class AnalisadorSintatico{
    //FATOR: id['[' EXP ']'] | VALOR | !FATOR | '('EXP')'
    public static String fator(){
       String fator_tipo = ""; 
+      Retorno fator_retorno = new Retorno();
       if(token_atual == NumToken.T_ID){
          token_esperado = NumToken.T_ID;
          casaToken(token_esperado);
@@ -1082,6 +1083,10 @@ public class AnalisadorSintatico{
       }
       else if(token_atual == NumToken.T_CONSTANTE || token_atual == NumToken.T_HEXA || token_atual == NumToken.T_STRING){
          fator_tipo = valor();
+         codigo.append("dseg SEGMENT PUBLIC");
+         codigo.append("byte "+al.registroLexico.get(contRegLex).getLexema()+"$");
+         codigo.append("dseg ENDS");
+         fator_retorno.setEnd(proximaPosicaoMemoria("T_CARACTERE", 0));
       }
       
       else if(token_atual == NumToken.T_NOT){
@@ -1090,7 +1095,12 @@ public class AnalisadorSintatico{
          contRegLex++;
          token_atual = al.registroLexico.get(contRegLex).getToken();
          //Acao 2
-         fator_tipo = fator();
+         if(al.registroLexico.getTipo().equals("T_LOGICO")){
+               fator_tipo = fator();
+         }else{
+            System.out.println(al.registroLexico.get(contRegLex-1).getLinha() + ":Tipos incompativeis [" +  al.registroLexico.get(contRegLex-1).getToken() + "]");
+            System.exit(0);
+         }
       }
       
       else if(token_atual == NumToken.T_ABREPAR){

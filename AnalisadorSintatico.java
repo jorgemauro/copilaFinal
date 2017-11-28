@@ -1095,7 +1095,7 @@ public class AnalisadorSintatico{
          contRegLex++;
          token_atual = al.registroLexico.get(contRegLex).getToken();
          //Acao 2
-         if(al.registroLexico.getTipo().equals("T_LOGICO")){
+         if(al.registroLexico.equals("T_LOGICO")){
                fator_tipo = fator();
          }else{
             System.out.println(al.registroLexico.get(contRegLex-1).getLinha() + ":Tipos incompativeis [" +  al.registroLexico.get(contRegLex-1).getToken() + "]");

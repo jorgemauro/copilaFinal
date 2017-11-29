@@ -154,7 +154,7 @@ class AnalisadorLexico{
                         }
                         else{
                             estado = 16; // estado de erro
-                            System.out.println(linha + ":lexema nao identificado [" + (char)c + "]");
+                            System.out.println(linha + ":lexema nao identificado [" + lex + "]");
                             System.exit(0);
                             break;
                         }

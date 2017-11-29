@@ -1,6 +1,6 @@
 /*  N3 Exemplo de Programa na linguagem L */
 
-Var integer n=0x1;
+Var char n=0x11;
 Char nome[40];
 Const MAXITER=10;
 

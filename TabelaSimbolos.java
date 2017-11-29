@@ -103,4 +103,12 @@ class TabelaSimbolos{
 		boolean numeroToken = simbolos.containsKey(lexema);
 		return numeroToken;
    	}
+	public int pesquisaEnd(String lexema){
+		lexema = lexema.toLowerCase();
+		return simbolos.get(lexema).getEndereco();
+	}
+	public void setEnd(String lexema, int end){
+		if(simbolos.get(lexema)!=null)
+		simbolos.get(lexema).setEndereco(end);
+	}
 }

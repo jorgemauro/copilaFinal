@@ -14,6 +14,7 @@ class RegistroLexico{
   private String classe;
   private String posicaoMemoria;
   private int tamanho;
+  private int endereco;
   
     //No AnalisadorSemantico
   public RegistroLexico(String lexema, NumToken token, String classe, String tipo) {
@@ -21,6 +22,7 @@ class RegistroLexico{
     this.token = token;
     this.classe = classe;
     this.tipo = tipo;
+    this.endereco=-1;
   }
   
   //No Analisador Lexico serve pra todos menos ID
@@ -81,4 +83,13 @@ public int getTamanho() {
 public void setTamanho(int tamanho) {
     this.tamanho = tamanho;
 }
+
+    public int getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(int endereco) {
+        this.endereco = endereco;
+    }
+
 }

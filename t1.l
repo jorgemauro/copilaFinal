@@ -1,8 +1,8 @@
 /* N3 Exemplo de Programa na linguagem L */
 
-Var integer a = "a";
+Var integer a = 30;
 Char nome[40];
-Const MAXITER=10;
+Const MAXITER = 10;
 
 /* Programa Principal */
 
